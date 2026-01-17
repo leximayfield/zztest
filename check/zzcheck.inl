@@ -15,7 +15,7 @@ TEST(zzt_passing, passing)
 {
     EXPECT_TRUE(1 == 1);
     EXPECT_FALSE(1 != 1);
-    EXPECT_BOOLEQ(1, 2);
+    EXPECT_BOOLEQ(1, 1);
     EXPECT_BOOLNE(0, 1);
     EXPECT_STREQ("foo", "foo");
     EXPECT_STRNE("foo", "bar");

@@ -191,11 +191,9 @@ zzt_stringify(char *buf, unsigned long buflen, const char *str)
  * @param buflen Length of buffer.
  * @param fmt Format type.
  * @param v Pointer to underlying value.
- * @param vs String representation of value.
  */
 static void
-zzt_printv(char *buf, ZZT_UINTMAX buflen, enum zzt_fmt_e fmt, const void *v,
-    const char *vs)
+zzt_printv(char *buf, ZZT_UINTMAX buflen, enum zzt_fmt_e fmt, const void *v)
 {
     switch (fmt) {
     case ZZT_FMT_BOOL: {
@@ -238,6 +236,47 @@ zzt_printv(char *buf, ZZT_UINTMAX buflen, enum zzt_fmt_e fmt, const void *v,
     case ZZT_FMT_STR: zzt_stringify(buf, buflen, (const char *)v); break;
     default: return;
     }
+}
+
+/**
+ * @brief Print a test error message.
+ *
+ * @param fmt How to format the result.
+ * @param cmp The comparison which was done.
+ * @param l Pointer to the left-hand value.
+ * @param r Pointer to the right-hand value.
+ * @param ls String form of left-hand value.
+ * @param rs String form of right-hand value.
+ * @param file Filename where test failed.
+ * @param line Line number where test failed.
+ */
+static void
+zzt_printerr(enum zzt_fmt_e fmt, enum zzt_cmp_e cmp, const void *l,
+    const void *r, const char *ls, const char *rs, const char *file,
+    unsigned long line)
+{
+    char lbuf[64] = {0};
+    char rbuf[64] = {0};
+
+    zzt_printv(lbuf, sizeof(lbuf), fmt, l);
+    zzt_printv(rbuf, sizeof(rbuf), fmt, r);
+    if (fmt != ZZT_FMT_STR) {
+        ZZT_PRINTF("%s(%lu): error: Expected %s %s %s, actual %s vs %s\n", file,
+            line, ls, g_cmpStrings[cmp], rs, lbuf, rbuf);
+    } else {
+        ZZT_PRINTF("%s(%lu): error: Expected equality of these values:\n", file,
+            line);
+        ZZT_PRINTF("  %s\n", ls);
+        if (strcmp(lbuf, ls)) {
+            ZZT_PRINTF("    Which is: %s\n", lbuf);
+        }
+
+        ZZT_PRINTF("  %s\n", rs);
+        if (strcmp(rbuf, rs)) {
+            ZZT_PRINTF("    Which is: %s\n", rbuf);
+        }
+    }
+    puts("");
 }
 
 /**
@@ -291,83 +330,19 @@ zzt_fail(struct zzt_test_state_s *state, const char *file, unsigned long line,
 /******************************************************************************/
 
 ZZT_BOOL
-zzt_cmp(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, enum zzt_cmp_e cmp,
-    const void *l, const void *r, const char *ls, const char *rs,
-    const char *file, unsigned long line)
+zzt_cmp_int(struct zzt_test_state_s *state, enum zzt_fmt_e fmt,
+    enum zzt_cmp_e cmp, ZZT_INTMAX l, ZZT_INTMAX r, const char *ls,
+    const char *rs, const char *file, unsigned long line)
 {
-    char lbuf[64] = {0};
-    char rbuf[64] = {0};
     ZZT_BOOL isEqual = ZZT_FALSE;
 
-    if (fmt == ZZT_FMT_BOOL) {
-        switch (cmp) {
-        case ZZT_CMP_EQ: isEqual = *((int *)l) == *((int *)r); break;
-        case ZZT_CMP_NE: isEqual = *((int *)l) != *((int *)r); break;
-        default: break;
-        }
-    } else if (fmt == ZZT_FMT_CHAR) {
-        switch (cmp) {
-        case ZZT_CMP_EQ: isEqual = *((char *)l) == *((char *)r); break;
-        case ZZT_CMP_NE: isEqual = *((char *)l) != *((char *)r); break;
-        case ZZT_CMP_LT: isEqual = *((char *)l) < *((char *)r); break;
-        case ZZT_CMP_LE: isEqual = *((char *)l) <= *((char *)r); break;
-        case ZZT_CMP_GT: isEqual = *((char *)l) > *((char *)r); break;
-        case ZZT_CMP_GE: isEqual = *((char *)l) >= *((char *)r); break;
-        }
-    } else if (fmt == ZZT_FMT_INT) {
-        switch (cmp) {
-        case ZZT_CMP_EQ:
-            isEqual = *((ZZT_INTMAX *)l) == *((ZZT_INTMAX *)r);
-            break;
-        case ZZT_CMP_NE:
-            isEqual = *((ZZT_INTMAX *)l) != *((ZZT_INTMAX *)r);
-            break;
-        case ZZT_CMP_LT:
-            isEqual = *((ZZT_INTMAX *)l) < *((ZZT_INTMAX *)r);
-            break;
-        case ZZT_CMP_LE:
-            isEqual = *((ZZT_INTMAX *)l) <= *((ZZT_INTMAX *)r);
-            break;
-        case ZZT_CMP_GT:
-            isEqual = *((ZZT_INTMAX *)l) > *((ZZT_INTMAX *)r);
-            break;
-        case ZZT_CMP_GE:
-            isEqual = *((ZZT_INTMAX *)l) >= *((ZZT_INTMAX *)r);
-            break;
-        }
-    } else if (fmt == ZZT_FMT_UINT || fmt == ZZT_FMT_XINT) {
-        switch (cmp) {
-        case ZZT_CMP_EQ:
-            isEqual = *((ZZT_UINTMAX *)l) == *((ZZT_UINTMAX *)r);
-            break;
-        case ZZT_CMP_NE:
-            isEqual = *((ZZT_UINTMAX *)l) != *((ZZT_UINTMAX *)r);
-            break;
-        case ZZT_CMP_LT:
-            isEqual = *((ZZT_UINTMAX *)l) < *((ZZT_UINTMAX *)r);
-            break;
-        case ZZT_CMP_LE:
-            isEqual = *((ZZT_UINTMAX *)l) <= *((ZZT_UINTMAX *)r);
-            break;
-        case ZZT_CMP_GT:
-            isEqual = *((ZZT_UINTMAX *)l) > *((ZZT_UINTMAX *)r);
-            break;
-        case ZZT_CMP_GE:
-            isEqual = *((ZZT_UINTMAX *)l) >= *((ZZT_UINTMAX *)r);
-            break;
-        }
-    } else if (fmt == ZZT_FMT_STR) {
-        switch (cmp) {
-        case ZZT_CMP_EQ:
-            isEqual = strcmp((const char *)l, (const char *)r) == 0;
-            break;
-        case ZZT_CMP_NE:
-            isEqual = strcmp((const char *)l, (const char *)r) != 0;
-            break;
-        default: break;
-        }
-    } else {
-        return ZZT_FALSE;
+    switch (cmp) {
+    case ZZT_CMP_EQ: isEqual = l == r; break;
+    case ZZT_CMP_NE: isEqual = l != r; break;
+    case ZZT_CMP_LT: isEqual = l < r; break;
+    case ZZT_CMP_LE: isEqual = l <= r; break;
+    case ZZT_CMP_GT: isEqual = l > r; break;
+    case ZZT_CMP_GE: isEqual = l >= r; break;
     }
 
     if (isEqual) {
@@ -375,27 +350,57 @@ zzt_cmp(struct zzt_test_state_s *state, enum zzt_fmt_e fmt, enum zzt_cmp_e cmp,
     }
 
     state->failed += 1;
+    zzt_printerr(fmt, cmp, &l, &r, ls, rs, file, line);
+    return ZZT_FALSE;
+}
 
-    zzt_printv(lbuf, sizeof(lbuf), fmt, l, ls);
-    zzt_printv(rbuf, sizeof(rbuf), fmt, r, rs);
-    if (fmt != ZZT_FMT_STR) {
-        ZZT_PRINTF("%s(%lu): error: Expected %s %s %s, actual %s vs %s\n", file,
-            line, ls, g_cmpStrings[cmp], rs, lbuf, rbuf);
-    } else {
-        ZZT_PRINTF("%s(%lu): error: Expected equality of these values:\n", file,
-            line);
-        ZZT_PRINTF("  %s\n", ls);
-        if (strcmp(lbuf, ls)) {
-            ZZT_PRINTF("    Which is: %s\n", lbuf);
-        }
+/******************************************************************************/
 
-        ZZT_PRINTF("  %s\n", rs);
-        if (strcmp(rbuf, rs)) {
-            ZZT_PRINTF("    Which is: %s\n", rbuf);
-        }
+ZZT_BOOL
+zzt_cmp_uint(struct zzt_test_state_s *state, enum zzt_fmt_e fmt,
+    enum zzt_cmp_e cmp, ZZT_UINTMAX l, ZZT_UINTMAX r, const char *ls,
+    const char *rs, const char *file, unsigned long line)
+{
+    ZZT_BOOL isEqual = ZZT_FALSE;
+
+    switch (cmp) {
+    case ZZT_CMP_EQ: isEqual = l == r; break;
+    case ZZT_CMP_NE: isEqual = l != r; break;
+    case ZZT_CMP_LT: isEqual = l < r; break;
+    case ZZT_CMP_LE: isEqual = l <= r; break;
+    case ZZT_CMP_GT: isEqual = l > r; break;
+    case ZZT_CMP_GE: isEqual = l >= r; break;
     }
-    puts("");
 
+    if (isEqual) {
+        return ZZT_TRUE;
+    }
+
+    state->failed += 1;
+    zzt_printerr(fmt, cmp, &l, &r, ls, rs, file, line);
+    return ZZT_FALSE;
+}
+
+/******************************************************************************/
+
+ZZT_BOOL
+zzt_cmp_str(struct zzt_test_state_s *state, enum zzt_fmt_e fmt,
+    enum zzt_cmp_e cmp, const char *l, const char *r, const char *ls,
+    const char *rs, const char *file, unsigned long line)
+{
+    ZZT_BOOL isEqual = ZZT_FALSE;
+
+    switch (cmp) {
+    case ZZT_CMP_EQ: isEqual = 0 == strcmp(l, r); break;
+    case ZZT_CMP_NE: isEqual = 0 != strcmp(l, r); break;
+    }
+
+    if (isEqual) {
+        return ZZT_TRUE;
+    }
+
+    state->failed += 1;
+    zzt_printerr(fmt, cmp, l, r, ls, rs, file, line);
     return ZZT_FALSE;
 }
 
