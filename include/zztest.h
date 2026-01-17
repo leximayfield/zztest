@@ -22,6 +22,13 @@ typedef int ZZT_BOOL;
 #define ZZT_FALSE (0)
 #define ZZT_TRUE (1)
 
+/* Determine char signedness. */
+#if CHAR_MAX == SCHAR_MAX
+#define zzt_cmp_char zzt_cmp_int
+#else
+#define zzt_cmp_char zzt_cmp_uint
+#endif
+
 /* Determine our 64-bit data type. */
 #if defined(ULLONG_MAX) /* C99 */
 #if (ULLONG_MAX == 0xFFFFFFFFFFFFFFFF)
@@ -114,15 +121,9 @@ struct zzt_test_suite_s {
 #define ZZT_EXPECT_BOOL(cmp, l, r) \
     zzt_cmp_uint(zzt_test_state, ZZT_FMT_BOOL, cmp, l, r, #l, #r, __FILE__, \
         __LINE__)
-#if CHAR_MAX == SCHAR_MAX
 #define ZZT_EXPECT_CHAR(cmp, l, r) \
-    zzt_cmp_int(zzt_test_state, ZZT_FMT_CHAR, cmp, l, r, #l, #r, __FILE__, \
+    zzt_cmp_char(zzt_test_state, ZZT_FMT_CHAR, cmp, l, r, #l, #r, __FILE__, \
         __LINE__)
-#else
-#define ZZT_EXPECT_CHAR(cmp, l, r) \
-    zzt_cmp_uint(zzt_test_state, ZZT_FMT_CHAR, cmp, l, r, #l, #r, __FILE__, \
-        __LINE__)
-#endif
 #define ZZT_EXPECT_INT(cmp, l, r) \
     zzt_cmp_int(zzt_test_state, ZZT_FMT_INT, cmp, l, r, #l, #r, __FILE__, \
         __LINE__)
