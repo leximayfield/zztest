@@ -114,9 +114,15 @@ struct zzt_test_suite_s {
 #define ZZT_EXPECT_BOOL(cmp, l, r) \
     zzt_cmp_uint(zzt_test_state, ZZT_FMT_BOOL, cmp, l, r, #l, #r, __FILE__, \
         __LINE__)
+#if CHAR_MAX == SCHAR_MAX
 #define ZZT_EXPECT_CHAR(cmp, l, r) \
     zzt_cmp_int(zzt_test_state, ZZT_FMT_CHAR, cmp, l, r, #l, #r, __FILE__, \
         __LINE__)
+#else
+#define ZZT_EXPECT_CHAR(cmp, l, r) \
+    zzt_cmp_uint(zzt_test_state, ZZT_FMT_CHAR, cmp, l, r, #l, #r, __FILE__, \
+        __LINE__)
+#endif
 #define ZZT_EXPECT_INT(cmp, l, r) \
     zzt_cmp_int(zzt_test_state, ZZT_FMT_INT, cmp, l, r, #l, #r, __FILE__, \
         __LINE__)
@@ -232,8 +238,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_BOOLEQ(l, r) \
     do { \
-        ZZT_EXPECT_BOOL(ZZT_CMP_EQ, l, r); \
-        return; \
+        if (!ZZT_EXPECT_BOOL(ZZT_CMP_EQ, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -249,8 +256,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_BOOLNE(l, r) \
     do { \
-        ZZT_EXPECT_BOOL(ZZT_CMP_NE, l, r); \
-        return; \
+        if (!ZZT_EXPECT_BOOL(ZZT_CMP_NE, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -266,8 +274,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_CHAREQ(l, r) \
     do { \
-        ZZT_EXPECT_CHAR(ZZT_CMP_EQ, l, r); \
-        return; \
+        if (!ZZT_EXPECT_CHAR(ZZT_CMP_EQ, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -283,8 +292,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_CHARNE(l, r) \
     do { \
-        ZZT_EXPECT_CHAR(ZZT_CMP_NE, l, r); \
-        return; \
+        if (!ZZT_EXPECT_CHAR(ZZT_CMP_NE, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -300,8 +310,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_CHARLT(l, r) \
     do { \
-        ZZT_EXPECT_CHAR(ZZT_CMP_LT, l, r); \
-        return; \
+        if (!ZZT_EXPECT_CHAR(ZZT_CMP_LT, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -317,8 +328,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_CHARLE(l, r) \
     do { \
-        ZZT_EXPECT_CHAR(ZZT_CMP_LE, l, r); \
-        return; \
+        if (!ZZT_EXPECT_CHAR(ZZT_CMP_LE, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -334,8 +346,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_CHARGT(l, r) \
     do { \
-        ZZT_EXPECT_CHAR(ZZT_CMP_GT, l, r); \
-        return; \
+        if (!ZZT_EXPECT_CHAR(ZZT_CMP_GT, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -351,8 +364,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_CHARGE(l, r) \
     do { \
-        ZZT_EXPECT_CHAR(ZZT_CMP_GE, l, r); \
-        return; \
+        if (!ZZT_EXPECT_CHAR(ZZT_CMP_GE, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -368,8 +382,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_INTEQ(l, r) \
     do { \
-        ZZT_EXPECT_INT(ZZT_CMP_EQ, l, r); \
-        return; \
+        if (!ZZT_EXPECT_INT(ZZT_CMP_EQ, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -385,8 +400,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_INTNE(l, r) \
     do { \
-        ZZT_EXPECT_INT(ZZT_CMP_NE, l, r); \
-        return; \
+        if (!ZZT_EXPECT_INT(ZZT_CMP_NE, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -402,8 +418,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_INTLT(l, r) \
     do { \
-        ZZT_EXPECT_INT(ZZT_CMP_LT, l, r); \
-        return; \
+        if (!ZZT_EXPECT_INT(ZZT_CMP_LT, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -419,8 +436,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_INTLE(l, r) \
     do { \
-        ZZT_EXPECT_INT(ZZT_CMP_LE, l, r); \
-        return; \
+        if (!ZZT_EXPECT_INT(ZZT_CMP_LE, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -436,8 +454,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_INTGT(l, r) \
     do { \
-        ZZT_EXPECT_INT(ZZT_CMP_GT, l, r); \
-        return; \
+        if (!ZZT_EXPECT_INT(ZZT_CMP_GT, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -453,8 +472,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_INTGE(l, r) \
     do { \
-        ZZT_EXPECT_INT(ZZT_CMP_GE, l, r); \
-        return; \
+        if (!ZZT_EXPECT_INT(ZZT_CMP_GE, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -470,8 +490,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_UINTEQ(l, r) \
     do { \
-        ZZT_EXPECT_UINT(ZZT_CMP_EQ, l, r); \
-        return; \
+        if (!ZZT_EXPECT_UINT(ZZT_CMP_EQ, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -487,8 +508,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_UINTNE(l, r) \
     do { \
-        ZZT_EXPECT_UINT(ZZT_CMP_NE, l, r); \
-        return; \
+        if (!ZZT_EXPECT_UINT(ZZT_CMP_NE, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -504,8 +526,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_UINTLT(l, r) \
     do { \
-        ZZT_EXPECT_UINT(ZZT_CMP_LT, l, r); \
-        return; \
+        if (!ZZT_EXPECT_UINT(ZZT_CMP_LT, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -521,8 +544,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_UINTLE(l, r) \
     do { \
-        ZZT_EXPECT_UINT(ZZT_CMP_LE, l, r); \
-        return; \
+        if (!ZZT_EXPECT_UINT(ZZT_CMP_LE, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -538,8 +562,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_UINTGT(l, r) \
     do { \
-        ZZT_EXPECT_UINT(ZZT_CMP_GT, l, r); \
-        return; \
+        if (!ZZT_EXPECT_UINT(ZZT_CMP_GT, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -555,8 +580,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_UINTGE(l, r) \
     do { \
-        ZZT_EXPECT_UINT(ZZT_CMP_GE, l, r); \
-        return; \
+        if (!ZZT_EXPECT_UINT(ZZT_CMP_GE, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -573,8 +599,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_XINTEQ(l, r) \
     do { \
-        ZZT_EXPECT_XINT(ZZT_CMP_EQ, l, r); \
-        return; \
+        if (!ZZT_EXPECT_XINT(ZZT_CMP_EQ, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -591,8 +618,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_XINTNE(l, r) \
     do { \
-        ZZT_EXPECT_XINT(ZZT_CMP_NE, l, r); \
-        return; \
+        if (!ZZT_EXPECT_XINT(ZZT_CMP_NE, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -609,8 +637,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_XINTLT(l, r) \
     do { \
-        ZZT_EXPECT_XINT(ZZT_CMP_LT, l, r); \
-        return; \
+        if (!ZZT_EXPECT_XINT(ZZT_CMP_LT, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -627,8 +656,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_XINTLE(l, r) \
     do { \
-        ZZT_EXPECT_XINT(ZZT_CMP_LE, l, r); \
-        return; \
+        if (!ZZT_EXPECT_XINT(ZZT_CMP_LE, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -645,8 +675,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_XINTGT(l, r) \
     do { \
-        ZZT_EXPECT_XINT(ZZT_CMP_GT, l, r); \
-        return; \
+        if (!ZZT_EXPECT_XINT(ZZT_CMP_GT, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -663,8 +694,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_XINTGE(l, r) \
     do { \
-        ZZT_EXPECT_XINT(ZZT_CMP_GE, l, r); \
-        return; \
+        if (!ZZT_EXPECT_XINT(ZZT_CMP_GE, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -680,8 +712,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_STREQ(l, r) \
     do { \
-        ZZT_EXPECT_STR(ZZT_CMP_EQ, l, r); \
-        return; \
+        if (!ZZT_EXPECT_STR(ZZT_CMP_EQ, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
@@ -697,8 +730,9 @@ struct zzt_test_suite_s {
  */
 #define ASSERT_STRNE(l, r) \
     do { \
-        ZZT_EXPECT_STR(ZZT_CMP_NE, l, r); \
-        return; \
+        if (!ZZT_EXPECT_STR(ZZT_CMP_NE, l, r)) { \
+            return; \
+        } \
     } while (0)
 
 /**
