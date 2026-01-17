@@ -9,7 +9,9 @@
 
 #include "zztest.h"
 
-TEST(zztest, passing)
+/******************************************************************************/
+
+TEST(zzt_passing, passing)
 {
     EXPECT_TRUE(1 == 1);
     EXPECT_FALSE(1 != 1);
@@ -19,7 +21,7 @@ TEST(zztest, passing)
     EXPECT_STRNE("foo", "bar");
 }
 
-TEST(zztest, passing_char)
+TEST(zzt_passing, passing_char)
 {
     EXPECT_CHAREQ('a', 'a');
     EXPECT_CHARNE('a', 'b');
@@ -29,7 +31,7 @@ TEST(zztest, passing_char)
     EXPECT_CHARGE('b', 'a');
 }
 
-TEST(zztest, passing_int)
+TEST(zzt_passing, passing_int)
 {
     EXPECT_INTEQ(1, 1);
     EXPECT_INTNE(1, 2);
@@ -39,7 +41,7 @@ TEST(zztest, passing_int)
     EXPECT_INTGE(2, 1);
 }
 
-TEST(zztest, passing_uint)
+TEST(zzt_passing, passing_uint)
 {
     EXPECT_UINTEQ(1, 1);
     EXPECT_UINTNE(1, 2);
@@ -49,7 +51,7 @@ TEST(zztest, passing_uint)
     EXPECT_UINTGE(2, 1);
 }
 
-TEST(zztest, passing_xint)
+TEST(zzt_passing, passing_xint)
 {
     EXPECT_XINTEQ(1, 1);
     EXPECT_XINTNE(1, 2);
@@ -59,7 +61,18 @@ TEST(zztest, passing_xint)
     EXPECT_XINTGE(2, 1);
 }
 
-TEST(zztest, failing)
+SUITE(zzt_passing)
+{
+    SUITE_TEST(zzt_passing, passing);
+    SUITE_TEST(zzt_passing, passing_char);
+    SUITE_TEST(zzt_passing, passing_int);
+    SUITE_TEST(zzt_passing, passing_uint);
+    SUITE_TEST(zzt_passing, passing_xint);
+}
+
+/******************************************************************************/
+
+TEST(zzt_failing, failing)
 {
     EXPECT_TRUE(1 == 2);
     EXPECT_FALSE(1 != 2);
@@ -68,7 +81,7 @@ TEST(zztest, failing)
     ADD_FAILURE();
 }
 
-TEST(zztest, failing_char)
+TEST(zzt_failing, failing_char)
 {
     EXPECT_CHAREQ('a', 'b');
     EXPECT_CHARNE('a', 'a');
@@ -86,7 +99,7 @@ TEST(zztest, failing_char)
     EXPECT_CHAREQ(0x09, 0x5c);
 }
 
-TEST(zztest, failing_int)
+TEST(zzt_failing, failing_int)
 {
     EXPECT_INTEQ(1, 2);
     EXPECT_INTNE(1, 1);
@@ -98,7 +111,7 @@ TEST(zztest, failing_int)
     EXPECT_INTEQ(1, (int)2);
 }
 
-TEST(zztest, failing_uint)
+TEST(zzt_failing, failing_uint)
 {
     EXPECT_UINTEQ(1, 2);
     EXPECT_UINTNE(1, 1);
@@ -110,7 +123,7 @@ TEST(zztest, failing_uint)
     EXPECT_UINTEQ(1, 2u);
 }
 
-TEST(zztest, failing_xint)
+TEST(zzt_failing, failing_xint)
 {
     EXPECT_XINTEQ(0x1, 0x2);
     EXPECT_XINTNE(0x1, 0x1);
@@ -122,85 +135,94 @@ TEST(zztest, failing_xint)
     EXPECT_XINTEQ(0xabc, 0x0DEF);
 }
 
-TEST(zztest, failing_str)
+TEST(zzt_failing, failing_str)
 {
     EXPECT_STREQ("foo", "bar");
     EXPECT_STREQ("\r\n", "\t\\");
     EXPECT_STREQ("f\x6F\x6F", "b\x61r");
-    EXPECT_STREQ("", "The quick brown fox jumps over the lazy dog.\nLorem ipsum dolor sit amet.");
+    EXPECT_STREQ("", "The quick brown fox jumps over the lazy dog.\nLorem "
+                     "ipsum dolor sit amet.");
 }
 
-TEST(zztest, skipping)
+SUITE(zzt_failing)
 {
-    SKIP();
+    SUITE_TEST(zzt_failing, failing);
+    SUITE_TEST(zzt_failing, failing_char);
+    SUITE_TEST(zzt_failing, failing_int);
+    SUITE_TEST(zzt_failing, failing_uint);
+    SUITE_TEST(zzt_failing, failing_xint);
+    SUITE_TEST(zzt_failing, failing_str);
 }
 
-TEST(zztest, skipping2)
+/******************************************************************************/
+
+TEST(zzt_skipping, skipping) { SKIP(); }
+
+TEST(zzt_skipping, skipping2) { SKIP(); }
+
+SUITE(zzt_skipping)
 {
-    SKIP();
+    SUITE_TEST(zzt_skipping, skipping);
+    SUITE_TEST(zzt_skipping, skipping2);
 }
 
-TEST(zztest, assert_bool)
+/******************************************************************************/
+
+TEST(zzt_assert, assert_bool)
 {
     ASSERT_BOOLEQ(ZZT_TRUE, ZZT_FALSE);
     EXPECT_BOOLEQ(ZZT_FALSE, ZZT_TRUE);
 }
 
-TEST(zztest, assert_char)
+TEST(zzt_assert, assert_char)
 {
     ASSERT_CHAREQ('a', 'b');
     EXPECT_CHAREQ('c', 'd');
 }
 
-TEST(zztest, assert_int)
+TEST(zzt_assert, assert_int)
 {
     ASSERT_INTEQ(1, 2);
     EXPECT_INTEQ(3, 4);
 }
 
-TEST(zztest, assert_uint)
+TEST(zzt_assert, assert_uint)
 {
     ASSERT_UINTEQ(1, 2);
     EXPECT_UINTEQ(3, 4);
 }
 
-TEST(zztest, assert_xint)
+TEST(zzt_assert, assert_xint)
 {
     ASSERT_XINTEQ(1, 2);
     EXPECT_XINTEQ(3, 4);
 }
 
-TEST(zztest, assert_str)
+TEST(zzt_assert, assert_str)
 {
     ASSERT_STREQ("foo", "bar");
     EXPECT_STREQ("baz", "plugh");
 }
 
-SUITE(zztest)
+SUITE(zzt_assert)
 {
-    SUITE_TEST(zztest, passing);
-    SUITE_TEST(zztest, passing_char);
-    SUITE_TEST(zztest, passing_int);
-    SUITE_TEST(zztest, passing_uint);
-    SUITE_TEST(zztest, passing_xint);
-    SUITE_TEST(zztest, failing);
-    SUITE_TEST(zztest, failing_char);
-    SUITE_TEST(zztest, failing_int);
-    SUITE_TEST(zztest, failing_uint);
-    SUITE_TEST(zztest, failing_xint);
-    SUITE_TEST(zztest, failing_str);
-    SUITE_TEST(zztest, skipping);
-    SUITE_TEST(zztest, skipping2);
-    SUITE_TEST(zztest, assert_bool);
-    SUITE_TEST(zztest, assert_char);
-    SUITE_TEST(zztest, assert_int);
-    SUITE_TEST(zztest, assert_uint);
-    SUITE_TEST(zztest, assert_xint);
-    SUITE_TEST(zztest, assert_str);
+    SUITE_TEST(zzt_assert, assert_bool);
+    SUITE_TEST(zzt_assert, assert_char);
+    SUITE_TEST(zzt_assert, assert_int);
+    SUITE_TEST(zzt_assert, assert_uint);
+    SUITE_TEST(zzt_assert, assert_xint);
+    SUITE_TEST(zzt_assert, assert_str);
 }
 
-int main()
+/******************************************************************************/
+
+int
+main()
 {
-    ADD_TEST_SUITE(zztest);
+    ADD_TEST_SUITE(zzt_passing);
+    ADD_TEST_SUITE(zzt_failing);
+    ADD_TEST_SUITE(zzt_skipping);
+    ADD_TEST_SUITE(zzt_assert);
+
     return RUN_TESTS();
 }

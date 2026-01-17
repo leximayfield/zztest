@@ -1,4 +1,14 @@
-BasedOnStyle: Microsoft
+---
+BasedOnStyle: LLVM
+
+AccessModifierOffset: -4
+AlignAfterOpenBracket: DontAlign
+AllowShortCaseLabelsOnASingleLine: True
+BraceWrapping:
+  AfterFunction: True
+BreakAfterReturnType: TopLevel
+BreakBeforeBraces: Custom
+BreakTemplateDeclarations: No
 IndentWidth: 4
-AlignEscapedNewlines: DontAlign
-SortIncludes: false
+PenaltyBreakOpenParenthesis: 10
+SpaceAfterTemplateKeyword: No

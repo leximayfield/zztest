@@ -1,18 +1,17 @@
 zztest
 ======
-A unit test framework for crufty C/C++ compilers.
+A tiny unit test framework for resource-constrained environments and crufty
+C/C++ compilers.
 
 Why?
 ----
 I find myself hacking on old codebases from the 90's quite a bit, and I wanted
-a unit test framework that I could use for testing [kruft](https://github.com/leximayfield/kruft).
-From there, I...kind of went overboard, just to see if I could.
+a unit test framework that I could use for testing [kruft][1].  From there,
+I...kind of went overboard, just to see if I could.
 
-Unless you're a fan of retrocomputing like I am, you should probably be using
-[Google Test](https://github.com/google/googletest) instead.  That said, this
-_is_ a fully functional test framework written in plain old C, so if you find
-this framework useful for other niches, do not hesitate to reach out and
-let me know.
+Later, I realized that a test suite small enough for running tests in C
+compilers for DOS from 1991 was also small enough to run in modern embedded
+contexts, in environments where test runners like Google Test are a poor fit.
 
 Tested Compilers
 ----------------
@@ -23,10 +22,9 @@ Tested Compilers
 
 How to Use
 ----------
-This is a single-header library, simply include `zztest.h` from anyplace where
-you want to define tests.  There must be a single file where you must define
-`ZZTEST_IMPLEMENTATION` before including `zztest.h` in order to create
-implementations of the relevant functions.
+zztest is self-contained.  You can either drop `zztest.c` and `zztest.h`
+into your project and use them directly, or use the included `CMakeLists.txt`
+to build and link against the library separately.
 
 The interface and output is intentionally similar to Google Test, though
 the fact that zztest is written in C necessitates some differences.
@@ -100,3 +98,5 @@ implementation, so no allocator override is necessary.
 License
 -------
 Boost Software License.
+
+[1]: https://github.com/leximayfield/kruft
