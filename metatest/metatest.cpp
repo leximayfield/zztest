@@ -18,6 +18,7 @@
 
 struct zzt_test_state_s {
     struct zzt_test_s *test;
+    int passed;
     int failed;
     int skipped;
 };
@@ -29,6 +30,12 @@ RunTest(const zzt_test_s &test)
     test.func(&state);
     return state;
 }
+
+struct test_s {
+    int passed = 0;
+    int failed = 0;
+    zzt_test_s *test = nullptr;
+};
 
 /******************************************************************************/
 
@@ -52,12 +59,13 @@ TEST(metatest, testfalse)
 
 TEST_CASE("TRUE/FALSE")
 {
-    auto test = GENERATE(                 //
-        ZZT_TESTINFO(metatest, testtrue), //
-        ZZT_TESTINFO(metatest, testfalse));
+    auto test = GENERATE(                                //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, testtrue)}, //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, testtrue)});
 
-    auto state = RunTest(test);
-    REQUIRE(state.failed == 2);
+    auto state = RunTest(*test.test);
+    REQUIRE(state.passed == test.passed);
+    REQUIRE(state.failed == test.failed);
 }
 
 /******************************************************************************/
@@ -80,14 +88,25 @@ TEST(metatest, boolne)
     EXPECT_BOOLNE(true, true);
 }
 
+TEST(metatest, boolint)
+{
+    EXPECT_BOOLEQ(1, 2);
+    ASSERT_BOOLEQ(1, 2);
+    EXPECT_BOOLNE(1, 2);
+    ASSERT_BOOLNE(1, 2);
+    EXPECT_BOOLNE(1, 2);
+}
+
 TEST_CASE("ASSERT_BOOL")
 {
-    auto test = GENERATE(               //
-        ZZT_TESTINFO(metatest, booleq), //
-        ZZT_TESTINFO(metatest, boolne));
+    auto test = GENERATE(                              //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, booleq)}, //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, boolne)}, //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, boolint)});
 
-    auto state = RunTest(test);
-    REQUIRE(state.failed == 2);
+    auto state = RunTest(*test.test);
+    REQUIRE(state.passed == test.passed);
+    REQUIRE(state.failed == test.failed);
 }
 
 /******************************************************************************/
@@ -152,16 +171,17 @@ TEST(metatest, assert_charge)
 
 TEST_CASE("CHAR")
 {
-    auto test = GENERATE(                      //
-        ZZT_TESTINFO(metatest, assert_chareq), //
-        ZZT_TESTINFO(metatest, assert_charne), //
-        ZZT_TESTINFO(metatest, assert_charlt), //
-        ZZT_TESTINFO(metatest, assert_charle), //
-        ZZT_TESTINFO(metatest, assert_chargt), //
-        ZZT_TESTINFO(metatest, assert_charge));
+    auto test = GENERATE(                                     //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, assert_chareq)}, //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, assert_charne)}, //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, assert_charlt)}, //
+        test_s{4, 2, &ZZT_TESTINFO(metatest, assert_charle)}, //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, assert_chargt)}, //
+        test_s{4, 2, &ZZT_TESTINFO(metatest, assert_charge)});
 
-    auto state = RunTest(test);
-    REQUIRE(state.failed == 2);
+    auto state = RunTest(*test.test);
+    REQUIRE(state.passed == test.passed);
+    REQUIRE(state.failed == test.failed);
 }
 
 /******************************************************************************/
@@ -226,16 +246,17 @@ TEST(metatest, assert_intge)
 
 TEST_CASE("INT")
 {
-    auto test = GENERATE(                     //
-        ZZT_TESTINFO(metatest, assert_inteq), //
-        ZZT_TESTINFO(metatest, assert_intne), //
-        ZZT_TESTINFO(metatest, assert_intlt), //
-        ZZT_TESTINFO(metatest, assert_intle), //
-        ZZT_TESTINFO(metatest, assert_intgt), //
-        ZZT_TESTINFO(metatest, assert_intge));
+    auto test = GENERATE(                                    //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, assert_inteq)}, //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, assert_intne)}, //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, assert_intlt)}, //
+        test_s{4, 2, &ZZT_TESTINFO(metatest, assert_intle)}, //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, assert_intgt)}, //
+        test_s{4, 2, &ZZT_TESTINFO(metatest, assert_intge)});
 
-    auto state = RunTest(test);
-    REQUIRE(state.failed == 2);
+    auto state = RunTest(*test.test);
+    REQUIRE(state.passed == test.passed);
+    REQUIRE(state.failed == test.failed);
 }
 
 /******************************************************************************/
@@ -300,16 +321,17 @@ TEST(metatest, assert_uintge)
 
 TEST_CASE("UINT")
 {
-    auto test = GENERATE(                      //
-        ZZT_TESTINFO(metatest, assert_uinteq), //
-        ZZT_TESTINFO(metatest, assert_uintne), //
-        ZZT_TESTINFO(metatest, assert_uintlt), //
-        ZZT_TESTINFO(metatest, assert_uintle), //
-        ZZT_TESTINFO(metatest, assert_uintgt), //
-        ZZT_TESTINFO(metatest, assert_uintge));
+    auto test = GENERATE(                                     //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, assert_uinteq)}, //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, assert_uintne)}, //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, assert_uintlt)}, //
+        test_s{4, 2, &ZZT_TESTINFO(metatest, assert_uintle)}, //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, assert_uintgt)}, //
+        test_s{4, 2, &ZZT_TESTINFO(metatest, assert_uintge)});
 
-    auto state = RunTest(test);
-    REQUIRE(state.failed == 2);
+    auto state = RunTest(*test.test);
+    REQUIRE(state.passed == test.passed);
+    REQUIRE(state.failed == test.failed);
 }
 
 /******************************************************************************/
@@ -374,16 +396,17 @@ TEST(metatest, assert_xintge)
 
 TEST_CASE("XINT")
 {
-    auto test = GENERATE(                      //
-        ZZT_TESTINFO(metatest, assert_xinteq), //
-        ZZT_TESTINFO(metatest, assert_xintne), //
-        ZZT_TESTINFO(metatest, assert_xintlt), //
-        ZZT_TESTINFO(metatest, assert_xintle), //
-        ZZT_TESTINFO(metatest, assert_xintgt), //
-        ZZT_TESTINFO(metatest, assert_xintge));
+    auto test = GENERATE(                                     //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, assert_xinteq)}, //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, assert_xintne)}, //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, assert_xintlt)}, //
+        test_s{4, 2, &ZZT_TESTINFO(metatest, assert_xintle)}, //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, assert_xintgt)}, //
+        test_s{4, 2, &ZZT_TESTINFO(metatest, assert_xintge)});
 
-    auto state = RunTest(test);
-    REQUIRE(state.failed == 2);
+    auto state = RunTest(*test.test);
+    REQUIRE(state.passed == test.passed);
+    REQUIRE(state.failed == test.failed);
 }
 
 /******************************************************************************/
@@ -408,12 +431,13 @@ TEST(metatest, strne)
 
 TEST_CASE("STR")
 {
-    auto test = GENERATE(              //
-        ZZT_TESTINFO(metatest, streq), //
-        ZZT_TESTINFO(metatest, strne));
+    auto test = GENERATE(                             //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, streq)}, //
+        test_s{2, 2, &ZZT_TESTINFO(metatest, strne)});
 
-    auto state = RunTest(test);
-    REQUIRE(state.failed == 2);
+    auto state = RunTest(*test.test);
+    REQUIRE(state.passed == test.passed);
+    REQUIRE(state.failed == test.failed);
 }
 
 extern "C" int

@@ -43,6 +43,7 @@ static struct timeval g_cTimeStart;
 
 struct zzt_test_state_s {
     struct zzt_test_s *test;
+    int passed;
     int failed;
     int skipped;
 };
@@ -312,6 +313,14 @@ zzt_add_skip(struct zzt_test_s *test)
 /******************************************************************************/
 
 void
+zzt_pass(struct zzt_test_state_s *state)
+{
+    state->passed += 1;
+}
+
+/******************************************************************************/
+
+void
 zzt_skip(struct zzt_test_state_s *state)
 {
     state->skipped += 1;
@@ -346,6 +355,7 @@ zzt_cmp_int(struct zzt_test_state_s *state, enum zzt_fmt_e fmt,
     }
 
     if (isEqual) {
+        state->passed += 1;
         return ZZT_TRUE;
     }
 
@@ -373,6 +383,7 @@ zzt_cmp_uint(struct zzt_test_state_s *state, enum zzt_fmt_e fmt,
     }
 
     if (isEqual) {
+        state->passed += 1;
         return ZZT_TRUE;
     }
 
@@ -396,6 +407,7 @@ zzt_cmp_str(struct zzt_test_state_s *state, enum zzt_fmt_e fmt,
     }
 
     if (isEqual) {
+        state->passed += 1;
         return ZZT_TRUE;
     }
 
@@ -456,6 +468,7 @@ zzt_run_all(void)
 
             ZZT_PRINTF(ZZTLOG_RUN " %s\n", test->test_name);
             state.test = test;
+            state.passed = 0;
             state.failed = 0;
             state.skipped = 0;
 

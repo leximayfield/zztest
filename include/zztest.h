@@ -119,8 +119,8 @@ struct zzt_test_suite_s {
 #define ZZT_TESTINFO(s, t) s##__##t##__TINFO
 
 #define ZZT_EXPECT_BOOL(cmp, l, r) \
-    zzt_cmp_uint(zzt_test_state, ZZT_FMT_BOOL, cmp, l, r, #l, #r, __FILE__, \
-        __LINE__)
+    zzt_cmp_uint(zzt_test_state, ZZT_FMT_BOOL, cmp, !!(l), !!(r), #l, #r, \
+        __FILE__, __LINE__)
 #define ZZT_EXPECT_CHAR(cmp, l, r) \
     zzt_cmp_char(zzt_test_state, ZZT_FMT_CHAR, cmp, l, r, #l, #r, __FILE__, \
         __LINE__)
@@ -187,6 +187,8 @@ struct zzt_test_suite_s {
         if (!(t)) { \
             zzt_fail(zzt_test_state, __FILE__, __LINE__, \
                 "Value of: " #t "\n  Actual: false\nExpected: true"); \
+        } else { \
+            zzt_pass(zzt_test_state); \
         } \
     } while (0)
 
@@ -200,6 +202,8 @@ struct zzt_test_suite_s {
             zzt_fail(zzt_test_state, __FILE__, __LINE__, \
                 "Value of: " #t "\n  Actual: false\nExpected: true"); \
             return; \
+        } else { \
+            zzt_pass(zzt_test_state); \
         } \
     } while (0)
 
@@ -211,6 +215,8 @@ struct zzt_test_suite_s {
         if ((t)) { \
             zzt_fail(zzt_test_state, __FILE__, __LINE__, \
                 "Value of: " #t "\n  Actual: true\nExpected: false"); \
+        } else { \
+            zzt_pass(zzt_test_state); \
         } \
     } while (0)
 
@@ -223,6 +229,8 @@ struct zzt_test_suite_s {
             zzt_fail(zzt_test_state, __FILE__, __LINE__, \
                 "Value of: " #t "\n  Actual: true\nExpected: false"); \
             return; \
+        } else { \
+            zzt_pass(zzt_test_state); \
         } \
     } while (0)
 
@@ -775,6 +783,9 @@ struct zzt_test_suite_s {
  * @brief Run all tests and return code which can be returned from main().
  */
 #define RUN_TESTS() (zzt_run_all())
+
+void
+zzt_pass(struct zzt_test_state_s *state);
 
 void
 zzt_skip(struct zzt_test_state_s *state);
