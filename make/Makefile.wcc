@@ -1,0 +1,16 @@
+CC = wcc386.exe
+LD = wlinkp.exe
+
+check\zzcheck.exe: src\zztest.o check\zzcheck.o
+	$(LD) system dos4g file src\zztest.o,check\zzcheck.o name $@
+
+src\zztest.o: src\zztest.c
+	$(CC) /fo=$@ /i=include $<
+
+check\zzcheck.o: check\zzcheck.c
+	$(CC) /fo=$@ /i=include /i=check $<
+
+clean:
+	del src\*.o
+	del check\*.o
+	del check\*.exe
