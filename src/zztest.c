@@ -276,7 +276,7 @@ zzt_printerr(enum zzt_fmt_e fmt, enum zzt_cmp_e cmp, const void *l,
             ZZT_PRINTF("    Which is: %s\n", rbuf);
         }
     }
-    puts("");
+    ZZT_PRINTF("\n");
 }
 
 /**
